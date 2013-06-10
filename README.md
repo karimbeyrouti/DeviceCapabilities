@@ -3,7 +3,9 @@ DeviceCapabilities
 
 AS3 Utility class - DeviceCapabilities / Detection. 
 
-Example usage:
+Example usage:  
+
+
 
 DeviceCapabilities.init( stage , DeviceOrientation.LANDSCAPE );
 
