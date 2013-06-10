@@ -1,10 +1,12 @@
 DeviceCapabilities
 ==================
 
-AS3 Utility class - DeviceCapabilities / Detection. Example usage:
+AS3 Utility class - DeviceCapabilities / Detection. 
 
+Example usage:
 
-'''
+<code>
+
 package {
   import com.kurst.cfwrk.system.constants.DeviceOrientation;
 	import com.kurst.cfwrk.system.DeviceCapabilities;
@@ -27,4 +29,4 @@ package {
 		}
 	}
 }
-'''
+</code>
