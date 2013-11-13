@@ -40,15 +40,19 @@ package com.kurst.cfwrk.system
 
 	public class StarlingMultiResConfig
 	{
-		// ------------------------------------------------------------------------
+		//------------------------------------------------------------------------
+		
 		public static var viewPort : Rectangle = new Rectangle();
-		// ------------------------------------------------------------------------
+		
+		//------------------------------------------------------------------------
+		
 		private static var androidResolutionSettings : Vector.<DeviceResolutionInfo> = new Vector.<DeviceResolutionInfo>();
 		private static var resolutionSettingInitFlag : Boolean = false;
 		private static var iPhoneResolutionSetting : DeviceResolutionInfo;
 		private static var iPadResolutionSetting : DeviceResolutionInfo;
 
-		// ------------------------------------------------------------------------------------
+		//------------------------------------------------------------------------------------
+		
 		/**
 		 * 
 		 * Configure starling stage depending on device resolution. 
