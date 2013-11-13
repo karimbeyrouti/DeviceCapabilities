@@ -1,12 +1,12 @@
 /********************************************************************************************************************************************************************************
  * 
- * Class Name  	: StarlingMultiResConfig
- * Version 	  	: 1
+ * Class Name	: StarlingMultiResConfig
+ * Version		: 1
  * Description 	: Configure the viewport and stage for starling games and applications base on device type, resolution, and orientation
  * 
  ********************************************************************************************************************************************************************************
  * 
- * Author 		: based on the following: http://wiki.starling-framework.org/manual/multi-resolution_development
+ * Author 		: based on: http://wiki.starling-framework.org/manual/multi-resolution_development
  * 				  Karim Beyrouti ( karim@kurst.co.uk )
  * 
  ********************************************************************************************************************************************************************************
@@ -18,11 +18,11 @@
  *********************************************************************************************************************************************************************************
  * NOTES	 
  * 
- *	_starling 						= new Starling(StarlingRootClass, stage );
+ *	_starling = new Starling(StarlingRootClass, stage );
  *	
- *	Simulate an IOS device: 		StarlingMultiResConfig.set( stage, _starling , null , null , OSList.IOS );
- * 	Simulate an Android device: 	StarlingMultiResConfig.set( stage, _starling , null , null , OSList.ANDROID );
- * 	Production / no simulation: 	StarlingMultiResConfig.set( stage, _starling ) ;
+ *	Simulate an IOS device:		StarlingMultiResConfig.set( stage, _starling , null , null , OSList.IOS );
+ * 	Simulate an Android device: StarlingMultiResConfig.set( stage, _starling , null , null , OSList.ANDROID );
+ * 	Production / no simulation: StarlingMultiResConfig.set( stage, _starling ) ;
  * 		
  **********************************************************************************************************************************************************************************/
 package com.kurst.cfwrk.system
