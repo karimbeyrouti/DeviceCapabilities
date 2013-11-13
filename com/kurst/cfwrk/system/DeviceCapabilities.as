@@ -196,7 +196,7 @@ package com.kurst.cfwrk.system {
 			switch( m_stage.deviceOrientation ){
 				
 				case StageOrientation.ROTATED_RIGHT :
-				case StageOrientation.ROTATED_RIGHT :
+				case StageOrientation.ROTATED_LEFT :
 				
 					m_orientation 	= DeviceOrientation.LANDSCAPE;//landscape;
 					isLandscape 	= true;
@@ -218,6 +218,7 @@ package com.kurst.cfwrk.system {
 					break;
 					
 			}
+			
 			
 			return isLandscape;
 
