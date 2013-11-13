@@ -481,7 +481,7 @@ package com.kurst.cfwrk.system {
 				} else {
 						
 					result.device 		= DeviceList.DETECTION_ERROR;
-					result.os			= OSList.DETECTION_ERROR;
+					result.os			= OSList.IOS; // ERROR DETECTING IOS DEVICE - or could be simulated from desktop
 					
 					return result;
 					 
