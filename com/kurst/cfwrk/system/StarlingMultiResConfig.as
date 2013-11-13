@@ -2,7 +2,7 @@
 * 
 * Class Name  	: StarlingMultiResConfig
 * Version 	  	: 1
-* Description 	: configures the viewport and stage for starling games and applications base on device type, resolution, and orientation
+* Description 	: Configure the viewport and stage for starling games and applications base on device type, resolution, and orientation
 * 
 ********************************************************************************************************************************************************************************
 * 
@@ -66,11 +66,7 @@ package com.kurst.cfwrk.system
 		 * simulateDevice 	: String 	= null	- Simulate device ( OSList.IOS /  OSList.ANDROID )
 		 *  
 		 */
-		public static function set( flStage 		: Stage , 
-									starling 		: Starling , 
-									viewPort 		: Rectangle = null , 
-									desktopStage 	: Rectangle = null , 
-									simulateDevice 	: String = null ) : void
+		public static function set( flStage	: Stage , starling : Starling , viewPort : Rectangle = null , desktopStage : Rectangle = null , simulateDevice : String = null ) : void
 		{
 		
 			DeviceCapabilities.init( flStage );
@@ -86,22 +82,22 @@ package com.kurst.cfwrk.system
 				StarlingMultiResConfig.viewPort	= viewPort;
 			}
 			
-			starling.viewPort 				= StarlingMultiResConfig.viewPort;
+			starling.viewPort 	= StarlingMultiResConfig.viewPort;
 			
-			var landscape  	: Boolean		= DeviceCapabilities.isLandscape();
-			var deviceInfo 	: DeviceInfo 	= DeviceCapabilities.deviceInformation( simulateDevice );
+			var landscape  	: Boolean = DeviceCapabilities.isLandscape();
+			var deviceInfo 	: DeviceInfo = DeviceCapabilities.deviceInformation( simulateDevice );
 				
 			if ( deviceInfo.os == OSList.IOS )
 			{
 				if ( DeviceCapabilities.isTablet() )
 				{
-					starling.stage.stageWidth  	= ! landscape ? iPadResolutionSetting.stageSize.width 	: iPadResolutionSetting.stageSize.height; 
-					starling.stage.stageHeight 	= ! landscape ? iPadResolutionSetting.stageSize.height	: iPadResolutionSetting.stageSize.width;
+					starling.stage.stageWidth = ! landscape ? iPadResolutionSetting.stageSize.width 	: iPadResolutionSetting.stageSize.height; 
+					starling.stage.stageHeight = ! landscape ? iPadResolutionSetting.stageSize.height	: iPadResolutionSetting.stageSize.width;
 				}
 				else
 				{
-					starling.stage.stageWidth  	= ! landscape ? iPhoneResolutionSetting.stageSize.width		: iPhoneResolutionSetting.stageSize.height;
-					starling.stage.stageHeight 	= ! landscape ? iPhoneResolutionSetting.stageSize.height	: iPhoneResolutionSetting.stageSize.width;			
+					starling.stage.stageWidth = ! landscape ? iPhoneResolutionSetting.stageSize.width		: iPhoneResolutionSetting.stageSize.height;
+					starling.stage.stageHeight = ! landscape ? iPhoneResolutionSetting.stageSize.height	: iPhoneResolutionSetting.stageSize.width;			
 				}
 			} 
 			else if ( deviceInfo.os == OSList.ANDROID )
@@ -112,13 +108,13 @@ package com.kurst.cfwrk.system
 			{
 				if ( desktopStage )
 				{
-					starling.stage.stageWidth  	= desktopStage.width;
-					starling.stage.stageHeight 	= desktopStage.height;
+					starling.stage.stageWidth = desktopStage.width;
+					starling.stage.stageHeight = desktopStage.height;
 				} 
 				else
 				{
-					starling.stage.stageWidth  	= StarlingMultiResConfig.viewPort.width;
-					starling.stage.stageHeight 	= StarlingMultiResConfig.viewPort.height;
+					starling.stage.stageWidth = StarlingMultiResConfig.viewPort.width;
+					starling.stage.stageHeight = StarlingMultiResConfig.viewPort.height;
 				}
 			}
 		}
@@ -128,18 +124,16 @@ package com.kurst.cfwrk.system
 		private static function matchClosestResolution( flStage : Stage , starling : Starling , data : Vector.<DeviceResolutionInfo> ) : void 
 		{
 
-			var landscape  	: Boolean		= DeviceCapabilities.isLandscape();
-
-			var screenSize 	: Rectangle 	= new Rectangle();
-				screenSize.width			= flStage.fullScreenWidth;
-				screenSize.height 			= flStage.fullScreenHeight;
+			var landscape 			: Boolean 	= DeviceCapabilities.isLandscape();
+			var screenSize 			: Rectangle = new Rectangle();
+				screenSize.width 				= flStage.fullScreenWidth;
+				screenSize.height 				= flStage.fullScreenHeight;
 			
-			var selectedResolution 	: int 			= -1;
-			var diff				: Rectangle 	= new Rectangle();
-			var smallestDiff 		: Rectangle;
+			var selectedResolution 	: int = -1;
+			var diff				: Rectangle = new Rectangle();
+			var smallestDiff		: Rectangle;
 			
 			var dri					: DeviceResolutionInfo;
-			
 			var w 					: int;
 			var h 					: int;
 			
@@ -165,7 +159,7 @@ package com.kurst.cfwrk.system
 					}
 				}
 			}
-
+			
 			w = data[selectedResolution].stageSize.width;
 			h = data[selectedResolution].stageSize.height;
 			
