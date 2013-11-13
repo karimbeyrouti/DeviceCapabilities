@@ -423,6 +423,15 @@ package com.kurst.cfwrk.system {
 					result.os			= OSList.IOS;
 					result.supported	= true; 
 					
+				} else if ( hwModel.indexOf( "iPhone6" ) != -1 ) {// NEEDS TESTING
+	
+					result.width 		= 1136;
+					result.height 		= 640;
+					result.device 		= DeviceList.IPHONE_5S;
+					result.scale 		= 2;
+					result.os			= OSList.IOS;
+					result.supported	= true; 
+					
 				} else if ( hwModel.indexOf( "iPod1" ) != -1 ) {// NEEDS TESTING
 	
 					result.width 		= 480;
