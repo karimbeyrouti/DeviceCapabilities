@@ -87,7 +87,6 @@ package com.kurst.cfwrk.system
 
 			if ( deviceInfo.os == OSList.IOS )
 			{
-				
 				if ( DeviceCapabilities.isTablet() )
 				{
 					
@@ -97,9 +96,8 @@ package com.kurst.cfwrk.system
 				}
 				else
 				{
-					
-					updateAndMaintainAspectRatio( 	!landscape ? iPadResolutionSetting.stageSize.width : iPadResolutionSetting.stageSize.height , 
-													!landscape ? iPadResolutionSetting.stageSize.height : iPadResolutionSetting.stageSize.width , 
+					updateAndMaintainAspectRatio( 	!landscape ? iPhoneResolutionSetting.stageSize.width : iPhoneResolutionSetting.stageSize.height , 
+													!landscape ? iPhoneResolutionSetting.stageSize.height : iPhoneResolutionSetting.stageSize.width , 
 													flStage , starling );
 				}
 				
@@ -112,13 +110,13 @@ package com.kurst.cfwrk.system
 			{
 				if ( desktopStage )
 				{
-					starling.stage.stageWidth = desktopStage.width;
-					starling.stage.stageHeight = desktopStage.height;
+					starling.stage.stageWidth 	= desktopStage.width;
+					starling.stage.stageHeight	= desktopStage.height;
 				}
 				else
 				{
-					starling.stage.stageWidth = StarlingMultiResConfig.viewPort.width;
-					starling.stage.stageHeight = StarlingMultiResConfig.viewPort.height;
+					starling.stage.stageWidth 	= StarlingMultiResConfig.viewPort.width;
+					starling.stage.stageHeight 	= StarlingMultiResConfig.viewPort.height;
 				}
 			}
 
