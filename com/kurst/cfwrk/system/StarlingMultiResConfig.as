@@ -46,10 +46,10 @@ package com.kurst.cfwrk.system
 		
 		//------------------------------------------------------------------------
 		
-		private static var androidResolutionSettings : Vector.<DeviceResolutionInfo> = new Vector.<DeviceResolutionInfo>();
-		private static var resolutionSettingInitFlag : Boolean = false;
-		private static var iPhoneResolutionSetting : DeviceResolutionInfo;
-		private static var iPadResolutionSetting : DeviceResolutionInfo;
+		private static var androidResolutionSettings 	: Vector.<DeviceResolutionInfo> = new Vector.<DeviceResolutionInfo>();
+		private static var resolutionSettingInitFlag 	: Boolean = false;
+		private static var iPhoneResolutionSetting 		: DeviceResolutionInfo;
+		private static var iPadResolutionSetting 		: DeviceResolutionInfo;
 
 		//------------------------------------------------------------------------------------
 		
@@ -66,6 +66,7 @@ package com.kurst.cfwrk.system
 		 */
 		public static function set(flStage : Stage, starling : Starling, viewPort : Rectangle = null, desktopStage : Rectangle = null, simulateDevice : String = null) : void
 		{
+		
 			DeviceCapabilities.init(flStage);
 			initResolutionInfo();
 
@@ -86,16 +87,22 @@ package com.kurst.cfwrk.system
 
 			if ( deviceInfo.os == OSList.IOS )
 			{
+				
 				if ( DeviceCapabilities.isTablet() )
 				{
-					starling.stage.stageWidth = !landscape ? iPadResolutionSetting.stageSize.width : iPadResolutionSetting.stageSize.height;
-					starling.stage.stageHeight = !landscape ? iPadResolutionSetting.stageSize.height : iPadResolutionSetting.stageSize.width;
+					
+					updateAndMaintainAspectRatio( 	!landscape ? iPadResolutionSetting.stageSize.width : iPadResolutionSetting.stageSize.height , 
+													!landscape ? iPadResolutionSetting.stageSize.height : iPadResolutionSetting.stageSize.width , 
+													flStage , starling );
 				}
 				else
 				{
-					starling.stage.stageWidth = !landscape ? iPhoneResolutionSetting.stageSize.width : iPhoneResolutionSetting.stageSize.height;
-					starling.stage.stageHeight = !landscape ? iPhoneResolutionSetting.stageSize.height : iPhoneResolutionSetting.stageSize.width;
+					
+					updateAndMaintainAspectRatio( 	!landscape ? iPadResolutionSetting.stageSize.width : iPadResolutionSetting.stageSize.height , 
+													!landscape ? iPadResolutionSetting.stageSize.height : iPadResolutionSetting.stageSize.width , 
+													flStage , starling );
 				}
+				
 			}
 			else if ( deviceInfo.os == OSList.ANDROID )
 			{
@@ -114,33 +121,32 @@ package com.kurst.cfwrk.system
 					starling.stage.stageHeight = StarlingMultiResConfig.viewPort.height;
 				}
 			}
-		}
 
+				
+		}
 		/**
-		 * 
+		 * match closest resolution of device with from list of device resolutions and recomended stage sizes 
 		 */
 		private static function matchClosestResolution(flStage : Stage, starling : Starling, data : Vector.<DeviceResolutionInfo>) : void
 		{
-			var landscape : Boolean = DeviceCapabilities.isLandscape();
-			var screenSize : Rectangle = new Rectangle();
-			screenSize.width = flStage.fullScreenWidth;
-			screenSize.height = flStage.fullScreenHeight;
-
-			var selectedResolution : int = -1;
-			var diff : Rectangle = new Rectangle();
-			var smallestDiff : Rectangle;
-
-			var dri : DeviceResolutionInfo;
-			var w : int;
-			var h : int;
+			var screenSize 		: Rectangle = new Rectangle();
+				screenSize.width 			= flStage.fullScreenWidth;
+				screenSize.height 			= flStage.fullScreenHeight;
+			
+			var selectedResolution 	: int 		= -1;
+			var diff 				: Rectangle = new Rectangle();
+			var smallestDiff 		: Rectangle;
+			var dri 				: DeviceResolutionInfo;
+			var w 					: int;
+			var h 					: int;
 
 			for (var c : int = 0; c < data.length; c ++)
 			{
-				dri = data[c];
-
-				diff.width = screenSize.width - dri.screenSize.width;
+				
+				dri 		= data[c];
+				diff.width 	= screenSize.width - dri.screenSize.width;
 				diff.height = screenSize.height - dri.screenSize.height;
-
+				
 				if ( smallestDiff == null )
 				{
 					smallestDiff = diff.clone();
@@ -148,21 +154,34 @@ package com.kurst.cfwrk.system
 				}
 				else
 				{
-					if ( ( Math.abs(diff.width) < Math.abs(smallestDiff.width) ) && ( Math.abs(diff.height) < Math.abs(smallestDiff.height) ) )
+					if ( diff.width + diff.height < smallestDiff.width + smallestDiff.height )
 					{
 						selectedResolution = c;
 						smallestDiff = diff.clone();
 					}
+					
 				}
 			}
 
 			w = data[selectedResolution].stageSize.width;
 			h = data[selectedResolution].stageSize.height;
 
-			starling.stage.stageWidth = !landscape ? w : h;
-			starling.stage.stageHeight = !landscape ? h : w;
-		}
+			updateAndMaintainAspectRatio( w , h , flStage , starling);
 
+		}
+		/**
+		 * update starling stage and maintain aspect ratio of device
+		 */
+		private static function updateAndMaintainAspectRatio( _width : Number , _height : Number , flStage : Stage, starling : Starling ) : void
+		{
+			
+			var fullScreenWidth 	: Number 	= flStage.fullScreenWidth
+			var fullScreenHeight 	: Number 	= flStage.fullScreenHeight;
+			var scale				: Number 	= Math.max(( fullScreenWidth / _width ), ( fullScreenHeight / _height ));
+ 
+			starling.stage.stageWidth 		= ( fullScreenWidth / scale );
+			starling.stage.stageHeight 		= ( fullScreenHeight / scale );
+		}
 		/**
 		 * 
 		 */
@@ -176,11 +195,12 @@ package com.kurst.cfwrk.system
 				androidResolutionSettings.push(new DeviceResolutionInfo(480, 640, 240, 320, DeviceAssetType.SD, 2));
 				androidResolutionSettings.push(new DeviceResolutionInfo(480, 800, 240, 400, DeviceAssetType.SD, 2));
 				androidResolutionSettings.push(new DeviceResolutionInfo(640, 960, 320, 480, DeviceAssetType.SD, 2));
-				androidResolutionSettings.push(new DeviceResolutionInfo(720, 1280, 240, 426, DeviceAssetType.HD, 3));
 				androidResolutionSettings.push(new DeviceResolutionInfo(768, 1024, 256, 341, DeviceAssetType.HD, 3));
+				androidResolutionSettings.push(new DeviceResolutionInfo(720, 1280, 360, 640, DeviceAssetType.HD, 3));
+				androidResolutionSettings.push(new DeviceResolutionInfo(752, 1280, 376, 640, DeviceAssetType.HD, 3));
 
 				iPhoneResolutionSetting = new DeviceResolutionInfo(0, 0, 320, 480, DeviceAssetType.HD, 3);
-				iPadResolutionSetting = new DeviceResolutionInfo(0, 0, 384, 512, DeviceAssetType.HD, 3);
+				iPadResolutionSetting 	= new DeviceResolutionInfo(0, 0, 384, 512, DeviceAssetType.HD, 3);
 
 				resolutionSettingInitFlag = true;
 			}
