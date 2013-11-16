@@ -80,24 +80,22 @@ package com.kurst.cfwrk.system
 				StarlingMultiResConfig.viewPort = viewPort;
 			}
 
-			starling.viewPort = StarlingMultiResConfig.viewPort;
-
-			var landscape : Boolean = DeviceCapabilities.isLandscape();
+			starling.viewPort 			= StarlingMultiResConfig.viewPort;
+			var landscape : Boolean 	= DeviceCapabilities.isLandscape();
 			var deviceInfo : DeviceInfo = DeviceCapabilities.deviceInformation(simulateDevice);
 
 			if ( deviceInfo.os == OSList.IOS )
 			{
 				if ( DeviceCapabilities.isTablet() )
 				{
-					
-					updateAndMaintainAspectRatio( 	!landscape ? iPadResolutionSetting.stageSize.width : iPadResolutionSetting.stageSize.height , 
-													!landscape ? iPadResolutionSetting.stageSize.height : iPadResolutionSetting.stageSize.width , 
+					updateAndMaintainAspectRatio( 	landscape ? iPadResolutionSetting.stageSize.width : iPadResolutionSetting.stageSize.height , 
+													landscape ? iPadResolutionSetting.stageSize.height : iPadResolutionSetting.stageSize.width , 
 													flStage , starling );
 				}
 				else
 				{
-					updateAndMaintainAspectRatio( 	!landscape ? iPhoneResolutionSetting.stageSize.width : iPhoneResolutionSetting.stageSize.height , 
-													!landscape ? iPhoneResolutionSetting.stageSize.height : iPhoneResolutionSetting.stageSize.width , 
+					updateAndMaintainAspectRatio( 	landscape ? iPhoneResolutionSetting.stageSize.width : iPhoneResolutionSetting.stageSize.height , 
+													landscape ? iPhoneResolutionSetting.stageSize.height : iPhoneResolutionSetting.stageSize.width , 
 													flStage , starling );
 				}
 				
@@ -119,9 +117,10 @@ package com.kurst.cfwrk.system
 					starling.stage.stageHeight 	= StarlingMultiResConfig.viewPort.height;
 				}
 			}
-
-				
 		}
+		
+		//------------------------------------------------------------------------------------
+
 		/**
 		 * match closest resolution of device with from list of device resolutions and recomended stage sizes 
 		 */
@@ -161,8 +160,10 @@ package com.kurst.cfwrk.system
 				}
 			}
 
-			w = data[selectedResolution].stageSize.width;
-			h = data[selectedResolution].stageSize.height;
+			var landscape : Boolean = DeviceCapabilities.isLandscape();
+			
+			w = landscape ? data[selectedResolution].stageSize.width : data[selectedResolution].stageSize.height; 
+			h = landscape ? data[selectedResolution].stageSize.height : data[selectedResolution].stageSize.width;
 
 			updateAndMaintainAspectRatio( w , h , flStage , starling);
 
