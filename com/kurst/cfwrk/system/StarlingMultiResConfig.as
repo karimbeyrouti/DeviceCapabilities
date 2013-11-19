@@ -18,11 +18,11 @@
  *********************************************************************************************************************************************************************************
  * NOTES	 
  * 
- *	_starling = new Starling(StarlingRootClass, stage );
+ *	_resolutionConfig = new StarlingMultiResConfig(stage, _starling);
  *	
- *	Simulate an IOS device:		StarlingMultiResConfig.set( stage, _starling , null , null , OSList.IOS );
- * 	Simulate an Android device: StarlingMultiResConfig.set( stage, _starling , null , null , OSList.ANDROID );
- * 	Production / no simulation: StarlingMultiResConfig.set( stage, _starling ) ;
+ *	Simulate an IOS device:		_resolutionConfig.set( null , null , OSList.IOS );
+ * 	Simulate an Android device: _resolutionConfig.set( null , null , OSList.ANDROID );
+ * 	Production / no simulation: _resolutionConfig.set( );
  * 		
  **********************************************************************************************************************************************************************************/
 package com.kurst.cfwrk.system
@@ -40,16 +40,25 @@ package com.kurst.cfwrk.system
 
 	public class StarlingMultiResConfig
 	{
-		//------------------------------------------------------------------------
-		
-		public static var viewPort : Rectangle = new Rectangle();
 		
 		//------------------------------------------------------------------------
 		
-		private static var androidResolutionSettings 	: Vector.<DeviceResolutionInfo> = new Vector.<DeviceResolutionInfo>();
-		private static var resolutionSettingInitFlag 	: Boolean = false;
-		private static var iPhoneResolutionSetting 		: DeviceResolutionInfo;
-		private static var iPadResolutionSetting 		: DeviceResolutionInfo;
+		private var _viewPort 					: Rectangle 					= new Rectangle();
+		private var resolutionSettingInitFlag 	: Boolean 						= false;
+		private var _useDefaultResolutions		: Boolean 						= true;
+		private var _defaultAndroidSettings 	: Vector.<DeviceResolutionInfo> = new Vector.<DeviceResolutionInfo>();
+		private var _androidSettings 			: Vector.<DeviceResolutionInfo> = new Vector.<DeviceResolutionInfo>();
+		private var _iPhoneSetting 				: DeviceResolutionInfo;
+		private var _iPadSetting 				: DeviceResolutionInfo;
+		private var _stage						: Stage;
+		private var _starling					: Starling;
+		
+		//------------------------------------------------------------------------------------
+		
+		public function StarlingMultiResConfig(stage : Stage, starling : Starling)
+		{
+			init(stage, starling);
+		}
 
 		//------------------------------------------------------------------------------------
 		
@@ -57,30 +66,29 @@ package com.kurst.cfwrk.system
 		 * 
 		 * Configure starling stage depending on device resolution. 
 		 * 
-		 * flStage 			: Stage 			- Stage
-		 * starling 		: Starling 			- Starling instance
 		 * viewPort 		: Rectangle = null 	- Custom view port size - will use fullScreenWidth / fullScreenHeight if not set
 		 * desktopStage 	: Rectangle = null	- Size of starling stage for desktop apps
 		 * simulateDevice 	: String 	= null	- Simulate device ( OSList.IOS /  OSList.ANDROID )
 		 *  
 		 */
-		public static function set(flStage : Stage, starling : Starling, viewPort : Rectangle = null, desktopStage : Rectangle = null, simulateDevice : String = null) : void
+		public function set( viewPort : Rectangle = null, desktopStage : Rectangle = null, simulateDevice : String = null) : void
 		{
 		
-			DeviceCapabilities.init(flStage);
-			initResolutionInfo();
+			DeviceCapabilities.init(_stage);
+			initResolutionSettings();
 
-			if ( !viewPort )
+			if ( ! viewPort )
 			{
-				StarlingMultiResConfig.viewPort.width = flStage.fullScreenWidth;
-				StarlingMultiResConfig.viewPort.height = flStage.fullScreenHeight;
+				_viewPort.width 	= _stage.fullScreenWidth;
+				_viewPort.height = _stage.fullScreenHeight;
 			}
 			else
 			{
-				StarlingMultiResConfig.viewPort = viewPort;
+				_viewPort = viewPort;
 			}
 
-			starling.viewPort 			= StarlingMultiResConfig.viewPort;
+			_starling.viewPort 			= _viewPort;
+			
 			var landscape : Boolean 	= DeviceCapabilities.isLandscape();
 			var deviceInfo : DeviceInfo = DeviceCapabilities.deviceInformation(simulateDevice);
 
@@ -88,35 +96,48 @@ package com.kurst.cfwrk.system
 			{
 				if ( DeviceCapabilities.isTablet() )
 				{
-					updateAndMaintainAspectRatio( 	landscape ? iPadResolutionSetting.stageSize.width : iPadResolutionSetting.stageSize.height , 
-													landscape ? iPadResolutionSetting.stageSize.height : iPadResolutionSetting.stageSize.width , 
-													flStage , starling );
+					updateAndMaintainAspectRatio( 	landscape ? _iPadSetting.stageSize.width : _iPadSetting.stageSize.height , 
+													landscape ? _iPadSetting.stageSize.height : _iPadSetting.stageSize.width );
 				}
 				else
 				{
-					updateAndMaintainAspectRatio( 	landscape ? iPhoneResolutionSetting.stageSize.width : iPhoneResolutionSetting.stageSize.height , 
-													landscape ? iPhoneResolutionSetting.stageSize.height : iPhoneResolutionSetting.stageSize.width , 
-													flStage , starling );
+					updateAndMaintainAspectRatio( 	landscape ? _iPhoneSetting.stageSize.width : _iPhoneSetting.stageSize.height , 
+													landscape ? _iPhoneSetting.stageSize.height : _iPhoneSetting.stageSize.width );
 				}
 				
 			}
 			else if ( deviceInfo.os == OSList.ANDROID )
 			{
-				matchClosestResolution(flStage, starling, androidResolutionSettings)
+				matchClosestResolution( _defaultAndroidSettings)
 			}
 			else if ( deviceInfo.os == OSList.MAC || deviceInfo.os == OSList.WINDOWS )
 			{
 				if ( desktopStage )
 				{
-					starling.stage.stageWidth 	= desktopStage.width;
-					starling.stage.stageHeight	= desktopStage.height;
+					_starling.stage.stageWidth 	= desktopStage.width;
+					_starling.stage.stageHeight	= desktopStage.height;
 				}
 				else
 				{
-					starling.stage.stageWidth 	= StarlingMultiResConfig.viewPort.width;
-					starling.stage.stageHeight 	= StarlingMultiResConfig.viewPort.height;
+					_starling.stage.stageWidth 		= _viewPort.width;
+					_starling.stage.stageHeight 	= _viewPort.height;
 				}
 			}
+		}
+		/**
+		 * 
+		 */
+		public function init(stage : Stage, starling : Starling) : void
+		{
+			_stage = stage;
+			_starling = starling;
+		}
+		/**
+		 * 
+		 */
+		public function addAndroidResolution( dri : DeviceResolutionInfo ) : void
+		{
+			_androidSettings.push( dri );
 		}
 		
 		//------------------------------------------------------------------------------------
@@ -124,11 +145,11 @@ package com.kurst.cfwrk.system
 		/**
 		 * match closest resolution of device with from list of device resolutions and recomended stage sizes 
 		 */
-		private static function matchClosestResolution(flStage : Stage, starling : Starling, data : Vector.<DeviceResolutionInfo>) : void
+		private function matchClosestResolution( data : Vector.<DeviceResolutionInfo>) : void
 		{
 			var screenSize 		: Rectangle = new Rectangle();
-				screenSize.width 			= flStage.fullScreenWidth;
-				screenSize.height 			= flStage.fullScreenHeight;
+				screenSize.width 			= _stage.fullScreenWidth;
+				screenSize.height 			= _stage.fullScreenHeight;
 			
 			var selectedResolution 	: int 		= -1;
 			var diff 				: Rectangle = new Rectangle();
@@ -165,44 +186,99 @@ package com.kurst.cfwrk.system
 			w = landscape ? data[selectedResolution].stageSize.width : data[selectedResolution].stageSize.height; 
 			h = landscape ? data[selectedResolution].stageSize.height : data[selectedResolution].stageSize.width;
 
-			updateAndMaintainAspectRatio( w , h , flStage , starling);
+			updateAndMaintainAspectRatio( w , h );
 
 		}
 		/**
 		 * update starling stage and maintain aspect ratio of device
 		 */
-		private static function updateAndMaintainAspectRatio( _width : Number , _height : Number , flStage : Stage, starling : Starling ) : void
+		private function updateAndMaintainAspectRatio( _width : Number , _height : Number ) : void
 		{
 			
-			var fullScreenWidth 	: Number 	= flStage.fullScreenWidth
-			var fullScreenHeight 	: Number 	= flStage.fullScreenHeight;
+			var fullScreenWidth 	: Number 	= _stage.fullScreenWidth
+			var fullScreenHeight 	: Number 	= _stage.fullScreenHeight;
 			var scale				: Number 	= Math.max(( fullScreenWidth / _width ), ( fullScreenHeight / _height ));
  
-			starling.stage.stageWidth 		= ( fullScreenWidth / scale );
-			starling.stage.stageHeight 		= ( fullScreenHeight / scale );
+			_starling.stage.stageWidth 			= ( fullScreenWidth / scale );
+			_starling.stage.stageHeight 		= ( fullScreenHeight / scale );
 		}
 		/**
 		 * 
 		 */
-		private static function initResolutionInfo() : void
+		private function initResolutionSettings() : void
 		{
 			if ( !resolutionSettingInitFlag )
 			{
 				// Data Source: http://wiki.starling-framework.org/manual/multi-resolution_development
-				androidResolutionSettings.push(new DeviceResolutionInfo(240, 320, 240, 320, DeviceAssetType.LD, 1));
-				androidResolutionSettings.push(new DeviceResolutionInfo(320, 480, 320, 480, DeviceAssetType.LD, 1));
-				androidResolutionSettings.push(new DeviceResolutionInfo(480, 640, 240, 320, DeviceAssetType.SD, 2));
-				androidResolutionSettings.push(new DeviceResolutionInfo(480, 800, 240, 400, DeviceAssetType.SD, 2));
-				androidResolutionSettings.push(new DeviceResolutionInfo(640, 960, 320, 480, DeviceAssetType.SD, 2));
-				androidResolutionSettings.push(new DeviceResolutionInfo(768, 1024, 256, 341, DeviceAssetType.HD, 3));
-				androidResolutionSettings.push(new DeviceResolutionInfo(720, 1280, 360, 640, DeviceAssetType.HD, 3));
-				androidResolutionSettings.push(new DeviceResolutionInfo(752, 1280, 376, 640, DeviceAssetType.HD, 3));
+				_defaultAndroidSettings.push(new DeviceResolutionInfo(240, 320, 240, 320, DeviceAssetType.LD, 1));
+				_defaultAndroidSettings.push(new DeviceResolutionInfo(320, 480, 320, 480, DeviceAssetType.LD, 1));
+				_defaultAndroidSettings.push(new DeviceResolutionInfo(480, 640, 240, 320, DeviceAssetType.SD, 2));
+				_defaultAndroidSettings.push(new DeviceResolutionInfo(480, 800, 240, 400, DeviceAssetType.SD, 2));
+				_defaultAndroidSettings.push(new DeviceResolutionInfo(640, 960, 320, 480, DeviceAssetType.SD, 2));
+				_defaultAndroidSettings.push(new DeviceResolutionInfo(768, 1024, 256, 341, DeviceAssetType.HD, 3));
+				_defaultAndroidSettings.push(new DeviceResolutionInfo(720, 1280, 360, 640, DeviceAssetType.HD, 3));
+				_defaultAndroidSettings.push(new DeviceResolutionInfo(752, 1280, 376, 640, DeviceAssetType.HD, 3));
 
-				iPhoneResolutionSetting = new DeviceResolutionInfo(0, 0, 320, 480, DeviceAssetType.HD, 3);
-				iPadResolutionSetting 	= new DeviceResolutionInfo(0, 0, 384, 512, DeviceAssetType.HD, 3);
+				_iPhoneSetting 	= new DeviceResolutionInfo(0, 0, 320, 480, DeviceAssetType.HD, 3);
+				_iPadSetting 	= new DeviceResolutionInfo(0, 0, 384, 512, DeviceAssetType.HD, 3);
 
 				resolutionSettingInitFlag = true;
 			}
 		}
+
+		//------------------------------------------------------------------------
+		
+		/*
+		 * 
+		 */
+		public function get useDefaultResolutions() : Boolean
+		{
+			return _useDefaultResolutions;
+		}
+		public function set useDefaultResolutions(useDefaultResolutions : Boolean) : void
+		{
+			_useDefaultResolutions = useDefaultResolutions;
+		}
+		/*
+		 * 
+		 */
+		public function get androidSettings() : Vector.<DeviceResolutionInfo>
+		{
+			return _androidSettings;
+		}
+		public function set androidSettings(androidSettings : Vector.<DeviceResolutionInfo>) : void
+		{
+			_androidSettings = androidSettings;
+		}
+		/*
+		 * 
+		 */
+		public function get defaultAndroidSettings() : Vector.<DeviceResolutionInfo>
+		{
+			return _defaultAndroidSettings;
+		}
+		/*
+		 * 
+		 */
+		public function get iPhoneSetting() : DeviceResolutionInfo
+		{
+			return _iPhoneSetting;
+		}
+		public function set iPhoneSetting(iPhoneSetting : DeviceResolutionInfo) : void
+		{
+			_iPhoneSetting = iPhoneSetting;
+		}
+		/*
+		 * 
+		 */
+		public function get iPadSetting() : DeviceResolutionInfo
+		{
+			return _iPadSetting;
+		}
+		public function set iPadSetting(iPadSetting : DeviceResolutionInfo) : void
+		{
+			_iPadSetting = iPadSetting;
+		}
+	
 	}
 }
