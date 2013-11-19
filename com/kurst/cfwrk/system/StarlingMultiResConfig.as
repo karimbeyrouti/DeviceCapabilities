@@ -43,9 +43,9 @@ package com.kurst.cfwrk.system
 		
 		//------------------------------------------------------------------------
 		
-		private var _viewPort 					: Rectangle 					= new Rectangle();
 		private var resolutionSettingInitFlag 	: Boolean 						= false;
-		private var _useDefaultResolutions		: Boolean 						= true;
+		private var _viewPort 					: Rectangle 					= new Rectangle();
+		private var _useDefaultAndroidResolutions		: Boolean 						= true;
 		private var _defaultAndroidSettings 	: Vector.<DeviceResolutionInfo> = new Vector.<DeviceResolutionInfo>();
 		private var _androidSettings 			: Vector.<DeviceResolutionInfo> = new Vector.<DeviceResolutionInfo>();
 		private var _iPhoneSetting 				: DeviceResolutionInfo;
@@ -108,7 +108,14 @@ package com.kurst.cfwrk.system
 			}
 			else if ( deviceInfo.os == OSList.ANDROID )
 			{
-				matchClosestResolution( _defaultAndroidSettings)
+				if ( _useDefaultAndroidResolutions )
+				{
+					matchClosestResolution( _defaultAndroidSettings );
+				}
+				else
+				{
+					matchClosestResolution( _androidSettings );
+				}
 			}
 			else if ( deviceInfo.os == OSList.MAC || deviceInfo.os == OSList.WINDOWS )
 			{
@@ -231,13 +238,13 @@ package com.kurst.cfwrk.system
 		/*
 		 * 
 		 */
-		public function get useDefaultResolutions() : Boolean
+		public function get useDefaultAndroidResolutions() : Boolean
 		{
-			return _useDefaultResolutions;
+			return _useDefaultAndroidResolutions;
 		}
-		public function set useDefaultResolutions(useDefaultResolutions : Boolean) : void
+		public function set useDefaultAndroidResolutions(useDefaultResolutions : Boolean) : void
 		{
-			_useDefaultResolutions = useDefaultResolutions;
+			_useDefaultAndroidResolutions = useDefaultResolutions;
 		}
 		/*
 		 * 
